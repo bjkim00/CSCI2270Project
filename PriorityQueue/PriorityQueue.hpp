@@ -3,15 +3,17 @@
 
 #include <string>
 #include <cstring>
-
+using namespace std;
 // a struct to store customers group information
 struct RoadNode
 {
-  float sectionLength;
-  float quality;
-  float trafficVolume;
-  float priority;
-  std::string severity;
+    float sectionLength;
+    int quality;
+    int iri;
+    int rut;
+    int trafficVolume;
+    float priority;
+    string severity;
 };
 
 
@@ -25,8 +27,11 @@ class PriorityQueue
     // Purpose: free all resources that the object has acquired
     ~PriorityQueue();
 
+    // Purpose: Determine the priority of the highway
+    float calcPriority(int _quality, int _trafficVolume, int _iri, int _rut);
+
     // Purpose: enqueue new group into priority queue; call other
-    void enqueue (float _sectionLength, float _quality, float _trafficVolume, float _priority, std::string _severity);
+    void enqueue (float _sectionLength, int _quality, int _trafficVolume, string _severity, int _iri, int _rut);
 
     //Purpose: remove the group (allocate the table) at the front of the priority queue from
     void dequeue();
