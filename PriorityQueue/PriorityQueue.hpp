@@ -13,7 +13,7 @@ struct RoadNode
     int rut;
     int trafficVolume;
     float priority;
-    string severity;
+    bool severity;
 };
 
 
@@ -31,7 +31,7 @@ class PriorityQueue
     float calcPriority(int _quality, int _trafficVolume, int _iri, int _rut);
 
     // Purpose: enqueue new group into priority queue; call other
-    void enqueue (float _sectionLength, int _quality, int _trafficVolume, string _severity, int _iri, int _rut);
+    void enqueue (float _sectionLength, int _quality, int _trafficVolume, int _iri, int _rut);
 
     //Purpose: remove the group (allocate the table) at the front of the priority queue from
     void dequeue();
