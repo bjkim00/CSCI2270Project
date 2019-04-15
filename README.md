@@ -12,9 +12,9 @@ What we need to do:
 * Get Data
     * Determine Data format (geoJSON) and how to extract relevent data
     * HashTable for storing highways
+    * Printing pre-set ranges will be a function under the HashTable class that we are implementing (i.e. we can sprint the top-third priority highways, mid-third priority highways, and low-third priority highways.
 * Priority Queue
     * It needs a priority queue that takes into account the road quality and traffic volume through the section. It prioritizes the sections of road which have the worst quality and the greatest traffic volume
-    * Given Range Return list
     * Formula for determining Priority
     * If traffic volume is above a certain point it can also recommend other infrastructure upgrades such as HOV/Toll lane
 * Visualization
