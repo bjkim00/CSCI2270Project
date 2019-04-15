@@ -9,9 +9,8 @@ Story:
 Specifically, the goal of our project is to create a visual map that will show the areas that CDOT should prioritize. Our plan is the following:
 
 What we need to do:
-* Get Data from API
-    * Learning library for API
-    * Determine Data format (geoJSON) and how to extract relavent data
+* Get Data
+    * Determine Data format (geoJSON) and how to extract relevent data
     * HashTable for storing highways
 * Priority Queue
     * It needs a priority queue that takes into account the road quality and traffic volume through the section. It prioritizes the sections of road which have the worst quality and the greatest traffic volume
@@ -25,8 +24,3 @@ What we need to do:
         * Has multiple check marks that allows you to turn on different options from above struct
     * Overlay Google Maps
         *This is where we use QT to overlay our info on to google maps
-
-
-
-
-*
