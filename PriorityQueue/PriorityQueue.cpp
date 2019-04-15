@@ -28,7 +28,7 @@ float PriorityQueue::calcPriority(int _quality, int _trafficVolume, int _iri, in
 }
 
 // Purpose: enqueue new group into priority queue; call other
-void PriorityQueue::enqueue (float _sectionLength, int _quality, int _trafficVolume, string _severity, int _iri, int _rut){
+void PriorityQueue::enqueue (float _sectionLength, int _quality, int _trafficVolume, int _iri, int _rut){
     if(currentQueueSize == maxQueueSize)
     {
         cout<<"Heap full, cannot enqueue"<<endl;
@@ -44,7 +44,12 @@ void PriorityQueue::enqueue (float _sectionLength, int _quality, int _trafficVol
         addedGroup.priority = calcPriority(_quality, _trafficVolume, _iri, _rut);
         addedGroup.iri = _iri;
         addedGroup.rut = _rut;
-        addedGroup.severity = _severity;
+        if(_trafficVolume/_sectionLength >= 150000){ //This ratio for now is subject to change. I am not sure what the ratio
+            //should be in order to have a decent number of highways to be recommened to add HOV or Toll lanes
+            addedGroup.severity = true;
+        }else{
+            addedGroup.severity = false;
+        }
         priorityQueue[index] = addedGroup;
         if(index>0){
           repairUpward(index);
