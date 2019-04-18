@@ -1,0 +1,29 @@
+Field,Description
+hwy,"A Unique (3 Number - 1 Letter) Highway Identification Code or Designating for a State Highway, Business Route, U.S. Route or Tolled Facility. Odd numbers typically run North and South and Even numbers typically Run East and West."
+dir,Traffic flow direction
+bmp,Beginning milepoint
+emp,Ending milepoint
+length,Length of highway segment (in miles)
+region,A Domained Value Element (Region: 1-6) used to identify the Engineering Region number in which the Road Segment is located.
+year,Year finished
+funCl,"Indicates the functional category and usage limitations of the segment of road, as defined by FHWA, and is broken down between rural and urban areas."
+county,Name of the county the road segment lies in
+pTyp,"Pavement Type Classifications: 1 - Asphalt, 2 - Asphalt over concrete, 3 - Concrete, 4 - Concrete over asphalt"
+trafZ,"Traffic Classifications: 1 - Low (<0.3 million design equivalent single access load [ESAL]), 2 - Medium (0.3 - 3 million ESAL), 3 - High (3 - 10 million ESAL), 4 - Very High (10 - 30 million ESAL), 5 - Very Very High (> 30 million ESAL)"
+envZ,"Climate Classifications: 1 - Very cool (< 81 degrees), 2 - Cool (81 - 88), 3 - Moderate (88 - 97), 4 - Hot (>97)"
+depth,"Thickness Classifications: 1 - Asphalt <4"" thick or Concrete <8"" thick, 2 - Asphalt <6"" thick or Concrete >=8"" thick, 3 - Asphalt >= 6"" thick"
+numLanes,Number of lanes in the road segment
+pGrp,"Pavement group, which is a combination of the pavement, traffic, and climate classifications. 1323 means Asphalt, High Traffic, Cool Environment, >= 6"" Thick"
+nhs,A Domained Value Element (NHSDesig: 0-9) used to identify whether the Road Segment is designated as being part of the National Highway System. Also contains the text value (added at the end)
+iri,International roughness index (IRI) correlates somewhat with human exposure to whole-body vibration in vehicles and thus to perceived ride quality reading for the surface condition in the Primary Direction of Travel. Scaled to a score of 1-100.
+rut,A value between 0 and 100 that is used to calculate Remaining Service Life for rutting. A value of 100 indicates .15 inch or less rutting. A value of 50 is the threshold that indicates no more remaining service life. This occurs at an average rut depth of .55 inches.
+fatg,The amount of fatigue normalized on a scale of 0-100 (where 0 is the worst pavement in existence and 100 is a perfect pavement)
+tran,The amount of transverse cracking normalized on a scale of 0-100 (where 0 is the worst pavement in existence and 100 is a perfect pavement)
+long,The amount of logitudinal cracking normalized on a scale of 0-100 (where 0 is the worst pavement in existence and 100 is a perfect pavement)
+crbk,The amount of corner breaks normalized on a scale of 0-100 (where 0 is the worst pavement in existence and 100 is a perfect pavement)
+dl,"The drivability life, which is the number of years a pavement has left until it is no longer an acceptable driving surface"
+dlIdx,For CDOT use
+curve,For CDOT use
+mtcY,For CDOT use
+mtcD,For CDOT use
+cond,"Condition of the road: LOW, MODERATE, HIGH"

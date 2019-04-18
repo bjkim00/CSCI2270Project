@@ -1,19 +1,20 @@
 // CPP program to implement hashing with chaining
 #include<iostream>
 #include "hash.hpp"
+#include "json.hpp"
 
-
+using json = nlohmann::json;
 using namespace std;
 /*
   	Method Name: createNode
   	Purpose: Create a node with data as 'key'
     return: pointer to the new node
   	*/
-node* HashTable::createNode(int k, node* next)
+node* HashTable::createNode(string hwy)
 {
     node* nw = new node;
-    nw->key = k;
-    nw->next = next;
+    nw->highway = hwy;
+    nw->next = nullptr;
     return nw;
 }
 /*
@@ -50,27 +51,147 @@ HashTable::~HashTable()
 }
 
 /*
-  	Method Name: insertItem
-  	Purpose: inserts a node with data as 'key' into the Hash Table
-    return: false if 'key' already exists in the table, otherwise true
+  	Method Name: searchItem
+  	Purpose: function to search for "key" in the Hash Table
+    return: node with "key" as it's data if found, otherwise NULL
   	*/
-bool HashTable::insertItem(int key)
+node* HashTable::searchItem(string hwy, float beginPt, int type, int direction)
 {
-    if(!searchItem(key))
+    //Compute the index by using the hash function
+    int index = hashFunction(hwy);
+
+    //Find the index where it is
+    node* trav = hashTable[index];
+    //If its type 0 => only quality data
+    if (type == 0)
     {
-        // TODO :
-        // Use the hash function on the key to get the index/slot,
-        // create a new node with the key and insert it in this slot's list
-        int index = hashFunction(key);
-        node *nextVal = hashTable[index];
-        node* newNode = createNode(key, nextVal);
-        hashTable[index] = newNode;
-        return true;
+        //traverse through the whole link
+        while (trav != nullptr)
+        {
+            //If you find that bmp + hwy already exist: break out
+            if (trav->bmp == beginPt && trav->highway == hwy)
+                break;
+            trav = trav->next;
+        }
+        /* Make sure we can add both directions so: 
+            1. If it has the same code
+            2. Has the same bmp
+        Then Check to make sure the direction is the same
+            if not make trav = nullptr so we can add it*/
+        if (trav!= nullptr && trav->bmp == beginPt && trav->highway == hwy)
+        {
+            if (trav->dir != direction)
+                trav = nullptr;
+        }
+    }
+    //If its type 1 => only traffic data
+    else if (type == 1)
+    {
+        //Same idea as above
+        while (trav != nullptr)
+        {
+            //If you find that refpt + hwy already exist: break out
+            if (trav->refpt == beginPt && trav->highway == hwy)
+                break;
+            //otherwise keep traversing
+            trav = trav->next;
+        }
+        //Check explanation above
+        if (trav!= nullptr && trav->refpt == beginPt && trav->highway == hwy)
+        {
+            if (trav->dir != direction)
+                trav = nullptr;
+        }
+    }
+    /* TODO: Implement case for type== 2 */
+
+    
+    return trav;
+}
+
+/*
+  	Method Name: insertItem
+  	Purpose: creates a node from given json data 
+    return: node created or nullptr if node was not created
+  	*/
+node* HashTable::insertItem(string hwy, float beginPt, int type, json hwyJson, int direction)
+{
+    node* found = searchItem(hwy, beginPt, type, direction);
+    if(found == nullptr)
+    {
+        int index = hashFunction(hwy);
+        node *prevVal = hashTable[index];
+        node* createdNode = createNode(hwy);
+        //If a value already exists in the hash Index
+        if (prevVal != nullptr)
+        {
+            //Add to end of linked list
+            while(prevVal->next != nullptr)
+            {
+                prevVal = prevVal->next;
+            }
+            prevVal->next = createdNode;
+        }
+        //If hash is empty
+        else
+            hashTable[index] = createdNode;
+        
+        
+        if (type == 0)
+        {
+            createdNode->highway = hwyJson["hwy"];
+
+            string placeHolder = hwyJson["length"]; //Created because for some reason I can't use stof directly 
+            createdNode->lengthQuality = stof(placeHolder);
+
+            placeHolder = hwyJson["bmp"]; 
+            createdNode->bmp = stof(placeHolder); //Beginning mile point
+
+            createdNode->cond = hwyJson["cond"]; //Condition
+            createdNode->county = hwyJson["county"]; 
+
+            placeHolder = hwyJson["dir"];
+            createdNode->dir = stoi(placeHolder); //Direction
+
+            placeHolder = hwyJson["emp"]; 
+            createdNode->emp = stof(placeHolder); //ending mile point
+            
+            placeHolder = hwyJson["iri"];
+            createdNode->iri = stoi(placeHolder); //International roughness index (IRI) correlates to perceived ride quality 
+            
+            placeHolder = hwyJson["rut"];
+            createdNode->rut = stoi(placeHolder); 
+            
+            placeHolder = hwyJson["year"];
+            createdNode->year = stoi(placeHolder);
+            createdNode->type = 0;
+        }
+        //If the json file is highway traffic 
+        else if (type == 1)
+        {
+
+            string placeHolder = hwyJson["aadt"]; //Again have to do this because it can't convert directly
+            createdNode->aadt = stoi(placeHolder);  //Traffic volume
+
+            placeHolder = hwyJson["length_"];
+            createdNode->lengthTraffic = stof(placeHolder);
+
+            placeHolder = hwyJson["refpt"];
+            createdNode->refpt = stof(placeHolder); //Like bmp
+
+            placeHolder = hwyJson["endrefpt"];
+            createdNode->endrefpt = stof(placeHolder); //Like emp
+
+            createdNode->route = hwyJson["route"]; //Same as hwy code
+            createdNode->type = 1;
+        }
+        return createdNode;
      }
     else{
-        cout<<"duplicate entry: "<<key<<endl;
-        return false;
+        cout<<"duplicate entry of: "<<found->highway<< " BMP/REFPT: " << found->refpt << endl;
+        cout << "   " <<hwy<< " BMP/REFPT: " << beginPt << endl;
     }
+    return nullptr;
 
 }
 /*
@@ -78,15 +199,14 @@ bool HashTable::insertItem(int key)
   	Purpose: function to hash "key" into an index
     return: index in the Hash Table
   	*/
-unsigned int HashTable::hashFunction(int key)
+unsigned int HashTable::hashFunction(string hwy)
 {
+    string numbers = hwy.substr(0,3);
+    // int letter = hwy[3];
+    // letter -= 64;
+    int key = stoi(numbers)/* *letter */;
     return key;
-    // int hashKey;
-    // if (key<0)
-    //     hashKey = key*-1;
-    // else
-    //     hashKey = key;
-    // return hashKey;
+    
 }
 
 /*
@@ -98,10 +218,17 @@ void HashTable::printTable()
 {
     for (int i = 0; i < tableSize; i++) {
         cout << i <<"|| ";
-        //TODO
         node * trav = hashTable[i];
         while(trav != nullptr){
-            cout << trav->key << " ";
+            if (trav->type == 0)
+            {
+                cout << "HWY:" <<trav->highway <<":" <<trav->bmp <<":" <<trav->dir << " -> ";
+            }
+            else if (trav->type == 1)
+            {
+                cout << "HWY:" <<trav->highway <<":" <<trav->refpt << " -> ";
+            }
+            
             trav = trav->next;
         }
         cout << endl;
@@ -109,56 +236,8 @@ void HashTable::printTable()
 
  }
 
-/*
-  	Method Name: searchItem
-  	Purpose: function to search for "key" in the Hash Table
-    return: node with "key" as it's data if found, otherwise NULL
-  	*/
-node* HashTable::searchItem(int key)
-{
-    //Compute the index by using the hash function
-    int index = hashFunction(key);
-
-    //TODO: Search the list at that specific index and return the node if found
-    node* trav = hashTable[index];
-    while (trav != nullptr && trav->key != key)
-    {
-        trav = trav->next;
-    }
-    return trav;
-}
 
 
-bool findThreeSum(int arr[], HashTable &ht, int sizeOfArray)
-{
-    if (sizeOfArray<3)
-    {
-        return false;
-    }
-    for (int i=0; i<sizeOfArray; i++)
-    {
-        for (int j= i+1; j<sizeOfArray; j++)
-        {
-            if (arr[i]!= arr[j])
-            {
-                int twoSum = arr[i] + arr[j];
-                ht.insertItem(twoSum);
-            }
-            
-        }
-    }
-    for (int k=0; k<sizeOfArray; k++)
-    {
-        int searchFor = arr[k]*-1;
-        if (ht.searchItem(searchFor) != nullptr)
-        {
-            node *result = ht.searchItem(searchFor);
-            cout << "sum Found-" << result->key << endl;
-            return true;
-        }
-    }
-    return false;
-}
 
 //  int main ()
 //  {
