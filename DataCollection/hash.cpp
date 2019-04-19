@@ -96,12 +96,6 @@ node* HashTable::searchItem(string hwy, float beginPt, int type, int direction)
             //otherwise keep traversing
             trav = trav->next;
         }
-        //Check explanation above
-        if (trav!= nullptr && trav->refpt == beginPt && trav->highway == hwy)
-        {
-            if (trav->dir != direction)
-                trav = nullptr;
-        }
     }
     /* TODO: Implement case for type== 2 */
 
@@ -120,17 +114,42 @@ node* HashTable::insertItem(string hwy, float beginPt, int type, json hwyJson, i
     if(found == nullptr)
     {
         int index = hashFunction(hwy);
-        node *prevVal = hashTable[index];
+        node *currNode = hashTable[index];
+        node *prevVal = currNode;
         node* createdNode = createNode(hwy);
         //If a value already exists in the hash Index
         if (prevVal != nullptr)
         {
-            //Add to end of linked list
-            while(prevVal->next != nullptr)
+            //Add to the linked list in order of BMP
+            if (type == 0)
             {
-                prevVal = prevVal->next;
+                while(currNode != nullptr && currNode->bmp < beginPt)
+                {
+                    prevVal = currNode;
+                    currNode = currNode->next;
+                }
             }
-            prevVal->next = createdNode;
+            //Add to linked list in order of refpt
+            else if (type == 1)
+            {
+                while(currNode != nullptr && currNode->refpt < beginPt)
+                {
+                    prevVal = currNode;
+                    currNode = currNode->next;
+                }
+            }
+            //If it needs to replace the first index
+            if (currNode == hashTable[index])
+            {
+                hashTable[index] = createdNode;
+                createdNode->next = currNode;
+            }
+            else
+            {
+                prevVal->next = createdNode;
+                createdNode->next = currNode;
+            }
+           
         }
         //If hash is empty
         else
@@ -217,16 +236,16 @@ unsigned int HashTable::hashFunction(string hwy)
 void HashTable::printTable()
 {
     for (int i = 0; i < tableSize; i++) {
-        cout << i <<"|| ";
+        cout << i <<"|| \n";
         node * trav = hashTable[i];
         while(trav != nullptr){
             if (trav->type == 0)
             {
-                cout << "HWY:" <<trav->highway <<":" <<trav->bmp <<":" <<trav->dir << " -> ";
+                cout << "       HWY:" <<trav->highway <<" Segment:" <<trav->bmp <<"-" << trav->emp << " Traffic Avg:"<<trav->trafficAvg << " -> \n";
             }
             else if (trav->type == 1)
             {
-                cout << "HWY:" <<trav->highway <<":" <<trav->refpt << " -> ";
+                cout << "       HWY:" <<trav->highway <<" Segment:" <<trav->refpt << "-" <<trav->endrefpt << "Traffic:"<<trav->aadt <<" -> \n";
             }
             
             trav = trav->next;

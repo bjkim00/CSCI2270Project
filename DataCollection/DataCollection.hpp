@@ -30,15 +30,15 @@ TRAFFIC:
 //Compilation: g++ DataCollection.cpp hash.cpp -std=c++11
 class JSONparser
 {
-    private:
-        // HashTable hwyBuckets;
     public:
         JSONparser() { 
         };
         //This function creates a json object with the file given
         json fileToJson(std::string fileName);
         //This function creates a hash table of hwy structs and stores given hwy quality info in it
-        HashTable storeinHash(json hwyJson, int type);
+        HashTable storeinHash(json hwyJson, int type, int hashSize);
+        //This function adds data from traffic to quality hashtable
+        void combineHashTables(HashTable &traffic, HashTable &quality);
 };
 
 #endif

@@ -26,9 +26,9 @@ json JSONparser::fileToJson(std::string fileName)
     }
 }
 
-HashTable JSONparser::storeinHash(json hwyJson, int type)
+HashTable JSONparser::storeinHash(json hwyJson, int type, int hashSize)
 {
-    HashTable hwyHash(560);
+    HashTable hwyHash(hashSize);
     //loops through all items
     for (auto& it: hwyJson.items())
     {
@@ -55,13 +55,63 @@ HashTable JSONparser::storeinHash(json hwyJson, int type)
     }
     return hwyHash;
 }
+
+void JSONparser::combineHashTables(HashTable &traffic, HashTable &quality)
+{
+    int trafficSize = traffic.getTableSize();
+    int qualitySize = quality.getTableSize();
+    
+    node ** qualityArray = quality.gethashTable();
+    node ** trafficArray = traffic.gethashTable();
+    // Loop through quality
+    for (int i = 0; i < trafficSize; i++) {
+        // cout << i <<"|| ";
+        node * travQ = qualityArray[i];
+        node * travT = trafficArray[i];
+
+        // if index is not empty
+        if (travT != nullptr)
+        {
+            int trafficSum = 0;
+            float totalLength = 0;
+            //Calculate traffic average
+            while (travT != nullptr)
+            {
+                trafficSum += travT->aadt;
+                totalLength += travT->lengthTraffic;
+                travT = travT->next;
+            }
+            float tavg = trafficSum/totalLength;
+            //Add the traffic avg to quality hashtable
+            while (travQ != nullptr)
+            {
+                travQ->trafficAvg = tavg;
+                travQ = travQ->next;
+            }
+        }
+
+       
+    }
+    
+}
+
 int main()
 {
+    /* IS a use case, this is how you should use this */
     JSONparser yeet;
+    //Stores the json files
     json hwyQJson = yeet.fileToJson("hwyQuality.json");
     json hwyTJson = yeet.fileToJson("hwyTraffic.json");
-    HashTable hwyQuality = yeet.storeinHash(hwyQJson, 0);
-    HashTable hwyTraffic = yeet.storeinHash(hwyTJson, 1);
+    
+    //Stores the values in hashtables
+    HashTable hwyQuality = yeet.storeinHash(hwyQJson, 0, 550);
+    HashTable hwyTraffic = yeet.storeinHash(hwyTJson, 1, 560);
+    // THis is what you want, its the complete hashtable that has all your needs
+    //While traffic ain't important it still helps
+    yeet.combineHashTables(hwyTraffic, hwyQuality);
+    // hwyTraffic.printTable();
     hwyQuality.printTable();
-    hwyTraffic.printTable();
+
+    /* Just some testing shite */
+    
 }

@@ -47,6 +47,8 @@ struct node
   float endrefpt; //Like emp
   string route; //Same as hwy code
 
+  float trafficAvg;
+
 };
 
 class HashTable
@@ -108,6 +110,17 @@ class HashTable
     return: node with "key" as it's data if found, otherwise NULL
   	*/
     node* searchItem(string hwy, float beginPt, int type, int direction);
+    
+    /* Getter for table size */
+    int getTableSize()
+    {
+      return tableSize;
+    }
+    /* Getter for tableArray */
+     node ** gethashTable()
+     {
+        return hashTable;
+     }
 };
 
 #endif
