@@ -106,6 +106,8 @@ void PriorityQueue::repairUpward(int nodeIndex){
         temp.trafficVolume = priorityQueue[parent].trafficVolume;
         temp.priority = priorityQueue[parent].priority;
         temp.severity = priorityQueue[parent].severity;
+        temp.iri = priorityQueue[parent].iri;
+        temp.rut = priorityQueue[parent].rut;
         priorityQueue[parent] = priorityQueue[nodeIndex];
         priorityQueue[nodeIndex] = temp;
         repairUpward(parent);
@@ -119,6 +121,8 @@ void PriorityQueue::repairUpward(int nodeIndex){
             temp.trafficVolume = priorityQueue[parent].trafficVolume;
             temp.priority = priorityQueue[parent].priority;
             temp.severity = priorityQueue[parent].severity;
+            temp.iri = priorityQueue[parent].iri;
+            temp.rut = priorityQueue[parent].rut;
             priorityQueue[parent] = priorityQueue[nodeIndex];
             priorityQueue[nodeIndex] = temp;
             repairUpward(parent);
@@ -156,6 +160,8 @@ void PriorityQueue::repairDownward(int nodeIndex){
         temp.trafficVolume = priorityQueue[highestPriority].trafficVolume;
         temp.priority = priorityQueue[highestPriority].priority;
         temp.severity = priorityQueue[highestPriority].severity;
+        temp.iri = priorityQueue[highestPriority].iri;
+        temp.rut = priorityQueue[highestPriority].rut;
         priorityQueue[highestPriority] = priorityQueue[nodeIndex];
         priorityQueue[nodeIndex] = temp;
     }
