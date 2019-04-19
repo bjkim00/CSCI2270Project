@@ -9,10 +9,11 @@ Story:
 Specifically, the goal of our project is to create a visual map that will show the areas that CDOT should prioritize. Our plan is the following:
 
 What we need to do:
-* Get Data
-    * Determine Data format (geoJSON) and how to extract relevent data
-    * HashTable for storing highways
-    * Printing pre-set ranges will be a function under the HashTable class that we are implementing (i.e. we can sprint the top-third priority highways, mid-third priority highways, and low-third priority highways.
+* Get Data and Store in Hash Table
+    * The Json files are stored in the same folder as data collection and use nlohmann's Json for Modern C++ for parsing
+    * It adds data from the json into two different hash tables. One for traffic and the other for road quality
+    * Then using values in the traffic, it calculates average traffic per length for a certain hwy and adds this to every data node in the Hash Table for quality. 
+    * Then the priority queue makes use of this data in order to determine which highways need to be fixed the soonest. 
 * Priority Queue
     * It needs a priority queue that takes into account the road quality and traffic volume through the section. It prioritizes the sections of road which have the worst quality and the greatest traffic volume
     * Formula for determining Priority
