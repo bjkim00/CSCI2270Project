@@ -95,23 +95,23 @@ void JSONparser::combineHashTables(HashTable &traffic, HashTable &quality)
     
 }
 
-int main()
-{
-    /* IS a use case, this is how you should use this */
-    JSONparser yeet;
-    //Stores the json files
-    json hwyQJson = yeet.fileToJson("hwyQuality.json");
-    json hwyTJson = yeet.fileToJson("hwyTraffic.json");
+// int main()
+// {
+//     /* IS a use case, this is how you should use this */
+//     JSONparser yeet;
+//     //Stores the json files
+//     json hwyQJson = yeet.fileToJson("hwyQuality.json");
+//     json hwyTJson = yeet.fileToJson("hwyTraffic.json");
     
-    //Stores the values in hashtables
-    HashTable hwyQuality = yeet.storeinHash(hwyQJson, 0, 550);
-    HashTable hwyTraffic = yeet.storeinHash(hwyTJson, 1, 560);
-    // THis is what you want, its the complete hashtable that has all your needs
-    //While traffic ain't important it still helps
-    yeet.combineHashTables(hwyTraffic, hwyQuality);
-    // hwyTraffic.printTable();
-    hwyQuality.printTable();
+//     //Stores the values in hashtables
+//     HashTable hwyQuality = yeet.storeinHash(hwyQJson, 0, 550);
+//     HashTable hwyTraffic = yeet.storeinHash(hwyTJson, 1, 560);
+//     // THis is what you want, its the complete hashtable that has all your needs
+//     //While traffic ain't important it still helps
+//     yeet.combineHashTables(hwyTraffic, hwyQuality);
+//     // hwyTraffic.printTable();
+//     hwyQuality.printTable();
 
-    /* Just some testing shite */
+//     /* Just some testing shite */
     
-}
+// }
