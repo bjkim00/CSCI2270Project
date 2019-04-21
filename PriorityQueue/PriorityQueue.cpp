@@ -24,11 +24,18 @@ PriorityQueue::~PriorityQueue(){
 
 //Purpose: Calculate priority of highway
 float PriorityQueue::calcPriority(int _quality, int _trafficVolume, int _iri, int _rut){
-    return ((_trafficVolume * _quality) + _iri + _rut)/1000000;
+    return (_trafficVolume * _quality) + _iri + _rut;
+}
+
+//Purpose: Normalize the priority of the highways
+void PriorityQueue::calcNormPriority(){
+    for(int i = 0; i < currentQueueSize; i++){
+        priorityQueue[i].normPriority = (priorityQueue[i].priority - minPriority)/(maxPriority - minPriority);
+    }
 }
 
 // Purpose: enqueue new group into priority queue; call other
-void PriorityQueue::enqueue (float _sectionLength, int _quality, int _trafficVolume, int _iri, int _rut){
+void PriorityQueue::enqueue (string _highway, float _sectionLength, int _quality, int _trafficVolume, int _iri, int _rut){
     if(currentQueueSize == maxQueueSize)
     {
         cout<<"Heap full, cannot enqueue"<<endl;
@@ -38,10 +45,17 @@ void PriorityQueue::enqueue (float _sectionLength, int _quality, int _trafficVol
         currentQueueSize++;
         int index = currentQueueSize - 1;
         RoadNode addedGroup;
+        addedGroup.highway = _highway;
         addedGroup.sectionLength = _sectionLength;
         addedGroup.quality = _quality;
         addedGroup.trafficVolume = _trafficVolume;
         addedGroup.priority = calcPriority(_quality, _trafficVolume, _iri, _rut);
+        if(addedGroup.priority >= maxPriority){
+            maxPriority = addedGroup.priority;
+        }
+        if(addedGroup.priority <= minPriority){
+            minPriority = addedGroup.priority;
+        }
         addedGroup.iri = _iri;
         addedGroup.rut = _rut;
         if(_trafficVolume/_sectionLength >= 150000){ //This ratio for now is subject to change. I am not sure what the ratio
@@ -101,6 +115,7 @@ void PriorityQueue::repairUpward(int nodeIndex){
     int parent = (nodeIndex-1)/2;
     if (parent >= 0 && priorityQueue[parent].priority < priorityQueue[nodeIndex].priority){ //would parent point to NULL ever?
         RoadNode temp;
+        temp.highway = priorityQueue[parent].highway;
         temp.sectionLength = priorityQueue[parent].sectionLength;
         temp.quality = priorityQueue[parent].quality;
         temp.trafficVolume = priorityQueue[parent].trafficVolume;
@@ -116,6 +131,7 @@ void PriorityQueue::repairUpward(int nodeIndex){
     else if(parent>=0 && priorityQueue[parent].priority == priorityQueue[nodeIndex].priority){
         if(priorityQueue[parent].sectionLength < priorityQueue[nodeIndex].sectionLength){
             RoadNode temp;
+            temp.highway = priorityQueue[parent].highway;
             temp.sectionLength = priorityQueue[parent].sectionLength;
             temp.quality = priorityQueue[parent].quality;
             temp.trafficVolume = priorityQueue[parent].trafficVolume;
@@ -155,6 +171,7 @@ void PriorityQueue::repairDownward(int nodeIndex){
 
     if(highestPriority!= nodeIndex){
         RoadNode temp;
+        temp.highway = priorityQueue[highestPriority].highway;
         temp.sectionLength = priorityQueue[highestPriority].sectionLength;
         temp.quality = priorityQueue[highestPriority].quality;
         temp.trafficVolume = priorityQueue[highestPriority].trafficVolume;
