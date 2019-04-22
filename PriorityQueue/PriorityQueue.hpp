@@ -10,8 +10,8 @@ struct RoadNode
     string highway; //Hwy name
     float sectionLength; //Length of the section that we are looking at
     int quality; //This should be the condition of the road converted to int
-    int iri; //International roughness index (1-100)
-    int rut; //RUT value between (0-100)
+    float iri; //International roughness index (1-100)
+    float rut; //RUT value between (0-100)
     float trafficVolume; //Traffic average
     float priority; //Priority of each individual section, this will be calculated
     //In calcPriority
@@ -31,13 +31,19 @@ class PriorityQueue
     ~PriorityQueue();
 
     // Purpose: Determine the priority of the highway
-    float calcPriority(int _quality, int _trafficVolume, int _iri, int _rut);
+    float calcPriority(int _quality, float _trafficVolume, float _iri, float _rut);
 
-    // Purpose: Normalize the priority of the highways
-    void calcNormPriority();
+    // Purpose: Normalize the traffic of the highways
+    void calcNormTraffic();
+
+    // Purpose: Normalize the iri of the highways
+    void calcNormIRI();
+
+    // Purpose: Normalize the rut of the highways
+    void calcNormRUT();
 
     // Purpose: enqueue new group into priority queue; call other
-    void enqueue (string _highway, float _sectionLength, int _quality, int _trafficVolume, int _iri, int _rut);
+    void enqueue (string _highway, float _sectionLength, int _quality, float _trafficVolume, float _iri, float _rut);
 
     //Purpose: remove the group (allocate the table) at the front of the priority queue from
     void dequeue();
@@ -62,8 +68,12 @@ class PriorityQueue
 
     RoadNode* priorityQueue; //pointer to the array used to implement priority queue
     int maxQueueSize; //maximum capacity of priority queue
-    float maxPriority; //maximum priority (no normalization)
-    float minPriority; //min priority (no normalization)
+    float maxTraffic; //maximum priority (no normalization)
+    float minTraffic; //min priority (no normalization)
+    float minIRI;
+    float maxIRI;
+    float minRUT;
+    float maxRUT;
 };
 
 #endif
