@@ -68,12 +68,13 @@ class PriorityQueue
 
     RoadNode* priorityQueue; //pointer to the array used to implement priority queue
     int maxQueueSize; //maximum capacity of priority queue
+    //Purpose: All of these min and max values will be used to normalize the data
     float maxTraffic; //maximum priority (no normalization)
     float minTraffic; //min priority (no normalization)
-    float minIRI;
-    float maxIRI;
-    float minRUT;
-    float maxRUT;
+    float minIRI; //max iri (no normalization)
+    float maxIRI; //min iri (no normalization)
+    float minRUT; //max rut (no normalization)
+    float maxRUT; //min rut (no normalization)
 };
 
 #endif
