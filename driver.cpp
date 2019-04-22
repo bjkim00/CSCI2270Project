@@ -1,6 +1,6 @@
-#include "PriorityQueue.hpp"
-#include "hash.hpp"
-#include "DataCollection.hpp"
+#include "PriorityQueue/PriorityQueue.hpp"
+#include "DataCollection/hash.hpp"
+#include "DataCollection/DataCollection.hpp"
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -20,6 +20,19 @@ cout << "1. Show the road with the highest priority" << endl;
 cout << "2. Remove the road with the highest priority" << endl;
 cout<<"3. Print top N"<<endl;
 cout << "4. Quit" << endl;
+}
+
+int checkValidInput(string l)
+{
+  if (l.length() > 1 )
+    return 0;
+  if (l[0] < 49 || l[0] > 52)
+    return 0;
+  else
+  {
+    return stoi(l);
+  }
+  
 }
 
 //Function designed to place all items in the queue into an ordered array that is passed into the Function
@@ -55,19 +68,20 @@ void printNode(RoadNode node){
   }
   cout<<"Highway: " <<node.highway<<endl;
   cout << "Section Length: " << node.sectionLength << endl;
+  cout<<"Priority: "<< node.priority<<endl;
   cout << "Road Quality: " << cond << endl;
   cout << "Traffic Volume: "<< node.trafficVolume << endl;
   cout << "Road IRI: "<< node.iri<<endl;
   cout << "Repair RUT: "<< node.rut<<endl;
-  cout<<"Priority: "<< node.priority<<endl;
+  
 }
 
 int main(int argc, char *argv[]){
     JSONparser highways; //This will create the JSONparser object that will
     //be used to read the data
-    json quality = highways.fileToJson("hwyQuality.json"); //Json file that holds
+    json quality = highways.fileToJson("DataCollection/hwyQuality.json"); //Json file that holds
     //quality data
-    json traffic = highways.fileToJson("hwyTraffic.json"); //Json file that holds
+    json traffic = highways.fileToJson("DataCollection/hwyTraffic.json"); //Json file that holds
     //traffic data
     HashTable hwyQ = highways.storeinHash(quality, 0, 560); //HashTable holding
     //quality data
@@ -100,10 +114,13 @@ int main(int argc, char *argv[]){
     queue.calcNormRUT(); //Normalize rut
     orderedArr(queue, v);
 
-    int input;//input variable for the switch case
-    do{
+    int input = 0;
+    while(input !=4)
+    {
       displayMenu();
-      cin>>input; // need checks to make sure input is valid
+      string line;
+      getline(cin, line); 
+      input = checkValidInput(line);
       switch(input){
         case 1:
         {
@@ -131,10 +148,11 @@ int main(int argc, char *argv[]){
           int count = queue.currentQueueSize;
           string n;
           cout<<"How many roads would you like to print: ";
-          cin.ignore();
+          cin.clear();
           getline(cin, n);
           orderedArr(queue, v);
-          for(int i = 0; i<stoi(n); i++){
+          int numRoads = checkValidInput(n);
+          for(int i = 0; i<numRoads; i++){
             if(count>0){
               cout<<"Road Section: "<<i+1<<endl;
               printNode(v[i]);
@@ -153,7 +171,8 @@ int main(int argc, char *argv[]){
           break;
         }
       }
-    }while(input !=4);
+    }
+      
 
     cout<<"Goodbye!"<<endl;
 
