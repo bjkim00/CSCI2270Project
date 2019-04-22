@@ -11,14 +11,16 @@ json JSONparser::fileToJson(std::string fileName)
 {
     std::ifstream hwyStream;
     hwyStream.open(fileName);
+    //Double check to make sure the file has opened successfully
     if (hwyStream.is_open())
     {
+        //File stored into json object
         std::cout << "Storing " << fileName <<  std::endl;
         json j;
         hwyStream >> j;
         return j;
     }
-    else 
+    else
     {
         cout << "File open failed" << endl;
         json empty;
@@ -51,16 +53,16 @@ HashTable JSONparser::storeinHash(json hwyJson, int type, int hashSize)
             float beginPt = stof(strBeginPt);
             hwyHash.insertItem(hwyCode, beginPt, 1, hwyJson[index], 0);
         }
-       
     }
     return hwyHash;
 }
 
+//Combines the two hashTables, qualtiy and traffic into one hashTable
 void JSONparser::combineHashTables(HashTable &traffic, HashTable &quality)
 {
     int trafficSize = traffic.getTableSize();
     int qualitySize = quality.getTableSize();
-    
+
     node ** qualityArray = quality.gethashTable();
     node ** trafficArray = traffic.gethashTable();
     // Loop through quality
@@ -90,9 +92,9 @@ void JSONparser::combineHashTables(HashTable &traffic, HashTable &quality)
             }
         }
 
-       
+
     }
-    
+
 }
 
 // int main()
@@ -102,7 +104,7 @@ void JSONparser::combineHashTables(HashTable &traffic, HashTable &quality)
 //     //Stores the json files
 //     json hwyQJson = yeet.fileToJson("hwyQuality.json");
 //     json hwyTJson = yeet.fileToJson("hwyTraffic.json");
-    
+
 //     //Stores the values in hashtables
 //     HashTable hwyQuality = yeet.storeinHash(hwyQJson, 0, 550);
 //     HashTable hwyTraffic = yeet.storeinHash(hwyTJson, 1, 560);
@@ -111,7 +113,4 @@ void JSONparser::combineHashTables(HashTable &traffic, HashTable &quality)
 //     yeet.combineHashTables(hwyTraffic, hwyQuality);
 //     // hwyTraffic.printTable();
 //     hwyQuality.printTable();
-
-//     /* Just some testing shite */
-    
 // }
