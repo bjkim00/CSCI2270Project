@@ -37,26 +37,28 @@ float PriorityQueue::calcPriority(int _quality, float _trafficVolume, float _iri
     return ((_trafficVolume * _quality) - _iri - _rut);
 }
 
-//Purpose: Normalize the priority of the highways
+//Purpose: Normalize the traffic of the highways between 0 and 1
 void PriorityQueue::calcNormTraffic(){
     for(int i = 0; i < currentQueueSize; i++){
         priorityQueue[i].trafficVolume = (priorityQueue[i].trafficVolume - minTraffic)/(maxTraffic - minTraffic);
     }
 }
 
+//Purpose: Normalize the IRI values between 0 and 1
 void PriorityQueue::calcNormIRI(){
     for(int i = 0; i < currentQueueSize; i++){
         priorityQueue[i].iri = (priorityQueue[i].iri - minIRI)/(maxIRI - minIRI);
     }
 }
 
+//Purpose: Normalize the RUT values between 0 and 1
 void PriorityQueue::calcNormRUT(){
     for(int i = 0; i < currentQueueSize; i++){
         priorityQueue[i].rut = (priorityQueue[i].rut - minRUT)/(maxRUT - minRUT);
     }
 }
 
-// Purpose: enqueue new group into priority queue; call other
+// Purpose: enqueue new group into priority queue; call the calc priority with the given values
 void PriorityQueue::enqueue (string _highway, float _sectionLength, int _quality, float _trafficVolume, float _iri, float _rut){
     if(currentQueueSize == maxQueueSize)
     {
@@ -72,7 +74,6 @@ void PriorityQueue::enqueue (string _highway, float _sectionLength, int _quality
         addedGroup.quality = _quality;
         addedGroup.trafficVolume = _trafficVolume;
         addedGroup.priority = calcPriority(_quality, _trafficVolume, _iri, _rut);
-        //addedGroup.normPriority = 0;
         addedGroup.iri = _iri;
         addedGroup.rut = _rut;
         //The following if statements just check to see if the new data
