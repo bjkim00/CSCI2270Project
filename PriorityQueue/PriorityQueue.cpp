@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 #include <cstring>
+#include <limits>
+#include <float.h>
 
 using namespace std;
 
@@ -12,6 +14,12 @@ PriorityQueue::PriorityQueue(int queueSize){
     priorityQueue = new RoadNode[queueSize];
     maxQueueSize = queueSize;
     currentQueueSize = 0;
+    maxTraffic = -FLT_MAX;
+    minTraffic = FLT_MAX;
+    maxIRI = -FLT_MAX;
+    minIRI = FLT_MAX;
+    maxRUT = -FLT_MAX;
+    minRUT = FLT_MAX;
 }
 
 // Purpose: free all resources that the object has acquired
@@ -23,19 +31,31 @@ PriorityQueue::~PriorityQueue(){
 }
 
 //Purpose: Calculate priority of highway
-float PriorityQueue::calcPriority(int _quality, int _trafficVolume, int _iri, int _rut){
-    return (_trafficVolume * _quality) + _iri + _rut;
+float PriorityQueue::calcPriority(int _quality, float _trafficVolume, float _iri, float _rut){
+    return ((_trafficVolume * _quality) - _iri - _rut);
 }
 
 //Purpose: Normalize the priority of the highways
-void PriorityQueue::calcNormPriority(){
+void PriorityQueue::calcNormTraffic(){
     for(int i = 0; i < currentQueueSize; i++){
-        priorityQueue[i].normPriority = (priorityQueue[i].priority - minPriority)/(maxPriority - minPriority);
+        priorityQueue[i].trafficVolume = (priorityQueue[i].trafficVolume - minTraffic)/(maxTraffic - minTraffic);
+    }
+}
+
+void PriorityQueue::calcNormIRI(){
+    for(int i = 0; i < currentQueueSize; i++){
+        priorityQueue[i].iri = (priorityQueue[i].iri - minIRI)/(maxIRI - minIRI);
+    }
+}
+
+void PriorityQueue::calcNormRUT(){
+    for(int i = 0; i < currentQueueSize; i++){
+        priorityQueue[i].rut = (priorityQueue[i].rut - minRUT)/(maxRUT - minRUT);
     }
 }
 
 // Purpose: enqueue new group into priority queue; call other
-void PriorityQueue::enqueue (string _highway, float _sectionLength, int _quality, int _trafficVolume, int _iri, int _rut){
+void PriorityQueue::enqueue (string _highway, float _sectionLength, int _quality, float _trafficVolume, float _iri, float _rut){
     if(currentQueueSize == maxQueueSize)
     {
         cout<<"Heap full, cannot enqueue"<<endl;
@@ -50,14 +70,27 @@ void PriorityQueue::enqueue (string _highway, float _sectionLength, int _quality
         addedGroup.quality = _quality;
         addedGroup.trafficVolume = _trafficVolume;
         addedGroup.priority = calcPriority(_quality, _trafficVolume, _iri, _rut);
-        if(addedGroup.priority >= maxPriority){
-            maxPriority = addedGroup.priority;
+        //addedGroup.normPriority = 0;
+        if(addedGroup.trafficVolume >= maxTraffic){
+            maxTraffic = addedGroup.trafficVolume;
         }
-        if(addedGroup.priority <= minPriority){
-            minPriority = addedGroup.priority;
+        if(addedGroup.trafficVolume <= minTraffic){
+            minTraffic = addedGroup.trafficVolume;
         }
         addedGroup.iri = _iri;
         addedGroup.rut = _rut;
+        if(addedGroup.iri >= maxIRI){
+            maxIRI = addedGroup.iri;
+        }
+        if(addedGroup.iri <= minIRI){
+            minIRI = addedGroup.iri;
+        }
+        if(addedGroup.rut >= maxRUT){
+            maxRUT = addedGroup.rut;
+        }
+        if(addedGroup.rut <= minRUT){
+            minRUT = addedGroup.rut;
+        }
         if(_trafficVolume/_sectionLength >= 150000){ //This ratio for now is subject to change. I am not sure what the ratio
             //should be in order to have a decent number of highways to be recommened to add HOV or Toll lanes
             addedGroup.severity = true;
@@ -113,7 +146,7 @@ bool PriorityQueue::isEmpty(){
 
 void PriorityQueue::repairUpward(int nodeIndex){
     int parent = (nodeIndex-1)/2;
-    if (parent >= 0 && priorityQueue[parent].priority < priorityQueue[nodeIndex].priority){ //would parent point to NULL ever?
+    if (parent >= 0 && priorityQueue[parent].priority < priorityQueue[nodeIndex].priority){
         RoadNode temp;
         temp.highway = priorityQueue[parent].highway;
         temp.sectionLength = priorityQueue[parent].sectionLength;
@@ -181,5 +214,6 @@ void PriorityQueue::repairDownward(int nodeIndex){
         temp.rut = priorityQueue[highestPriority].rut;
         priorityQueue[highestPriority] = priorityQueue[nodeIndex];
         priorityQueue[nodeIndex] = temp;
+        repairDownward(highestPriority);
     }
 }
