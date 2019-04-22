@@ -14,6 +14,8 @@ PriorityQueue::PriorityQueue(int queueSize){
     priorityQueue = new RoadNode[queueSize];
     maxQueueSize = queueSize;
     currentQueueSize = 0;
+    //We set the max and min data to negatives for max and positve for min
+    //so that we are sure they will be adjusted by any inputted data
     maxTraffic = -FLT_MAX;
     minTraffic = FLT_MAX;
     maxIRI = -FLT_MAX;
@@ -71,14 +73,16 @@ void PriorityQueue::enqueue (string _highway, float _sectionLength, int _quality
         addedGroup.trafficVolume = _trafficVolume;
         addedGroup.priority = calcPriority(_quality, _trafficVolume, _iri, _rut);
         //addedGroup.normPriority = 0;
+        addedGroup.iri = _iri;
+        addedGroup.rut = _rut;
+        //The following if statements just check to see if the new data
+        //are either min or max in their respective categories
         if(addedGroup.trafficVolume >= maxTraffic){
             maxTraffic = addedGroup.trafficVolume;
         }
         if(addedGroup.trafficVolume <= minTraffic){
             minTraffic = addedGroup.trafficVolume;
         }
-        addedGroup.iri = _iri;
-        addedGroup.rut = _rut;
         if(addedGroup.iri >= maxIRI){
             maxIRI = addedGroup.iri;
         }
@@ -144,6 +148,11 @@ bool PriorityQueue::isEmpty(){
     }
 }
 
+//The repairUpward and repairDownward just help keep the shape and
+//rules of the heap in check
+
+//Ultimately, these two functions are very similar to functions we had written for
+//class homework and recitation
 void PriorityQueue::repairUpward(int nodeIndex){
     int parent = (nodeIndex-1)/2;
     if (parent >= 0 && priorityQueue[parent].priority < priorityQueue[nodeIndex].priority){
