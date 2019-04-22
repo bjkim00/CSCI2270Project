@@ -15,65 +15,65 @@ g++ DataCollection/DataCollection.cpp PriorityQueue/PriorityQueue.cpp driver.cpp
 
 //Main menu that will take in the user input
 void displayMenu(){
-cout << "============Main Menu============" << endl;
-cout << "1. Show the road with the highest priority" << endl;
-cout << "2. Remove the road with the highest priority" << endl;
-cout<<"3. Print top N"<<endl;
-cout << "4. Quit" << endl;
+    cout << "============Main Menu============" << endl;
+    cout << "1. Show the road with the highest priority" << endl;
+    cout << "2. Remove the road with the highest priority" << endl;
+    cout<<"3. Print top N"<<endl;
+    cout << "4. Quit" << endl;
 }
 
+//Purpose: This is just making sure the input is valid
 int checkValidInput(string l)
 {
-  if (l.length() > 1 )
-    return 0;
-  if (l[0] < 49 || l[0] > 52)
-    return 0;
-  else
-  {
-    return stoi(l);
-  }
-  
+    if (l.length() > 1 )
+        return 0;
+    if (l[0] < 49 || l[0] > 52)
+        return 0;
+    else{
+        return stoi(l);
+    }
 }
 
 //Function designed to place all items in the queue into an ordered array that is passed into the Function
 RoadNode* orderedArr(PriorityQueue &queue, RoadNode v1[]){
-  int count=0;
-  int count1=0;
-  RoadNode temp;
-  while(!queue.isEmpty()){
-    temp = queue.peek();
-    v1[count1] = temp;
-    queue.dequeue();
-    count++;
-    count1++;
-  }
-  for(int i=0; i<count; i++){
-    queue.enqueue(v1[count-i-1].highway, v1[count-i-1].sectionLength, v1[count-i-1].quality, v1[count-i-1].trafficVolume, v1[count-i-1].iri, v1[count-i-1].rut);
-  }
-  return v1;
+    int count=0;
+    int count1=0;
+    RoadNode temp;
+    while(!queue.isEmpty()){
+        temp = queue.peek();
+        v1[count1] = temp;
+        queue.dequeue();
+        count++;
+        count1++;
+    }
+    for(int i=0; i<count; i++){
+        queue.enqueue(v1[count-i-1].highway, v1[count-i-1].sectionLength, v1[count-i-1].quality, v1[count-i-1].trafficVolume, v1[count-i-1].iri, v1[count-i-1].rut);
+    }
+    return v1;
 }
 
 
 //Given a RoadNode print all of its properties
 void printNode(RoadNode node){
-  string cond;
-  if(node.quality == 3){
-    cond = "Poor";
-  }
-  else if(node.quality == 2){
-    cond = "Fair";
-  }
-  else{
-    cond = "Good";
-  }
-  cout<<"Highway: " <<node.highway<<endl;
-  cout << "Section Length: " << node.sectionLength << endl;
-  cout<<"Priority: "<< node.priority<<endl;
-  cout << "Road Quality: " << cond << endl;
-  cout << "Traffic Volume: "<< node.trafficVolume << endl;
-  cout << "Road IRI: "<< node.iri<<endl;
-  cout << "Repair RUT: "<< node.rut<<endl;
-  
+    string cond;
+    //This resets the quality printing variable to a string
+    if(node.quality == 3){
+        cond = "Poor";
+    }
+    else if(node.quality == 2){
+        cond = "Fair";
+    }
+    else{
+        cond = "Good";
+    }
+    //Prints the essential variables for each RoadNode
+    cout<<"Highway: " <<node.highway<<endl;
+    cout << "Section Length: " << node.sectionLength << endl;
+    cout<<"Priority: "<< node.priority<<endl;
+    cout << "Road Quality: " << cond << endl;
+    cout << "Traffic Volume: "<< node.trafficVolume << endl;
+    cout << "Road IRI: "<< node.iri<<endl;
+    cout << "Repair RUT: "<< node.rut<<endl;
 }
 
 int main(int argc, char *argv[]){
@@ -99,6 +99,7 @@ int main(int argc, char *argv[]){
         {
             continue;
         }
+        //Purpose: We are adjusting the condition to an int to use for the priority calculation
         if(trav->cond == "LOW"){
             condition = 3;
         }else if(trav->cond == "MODERATE"){
@@ -115,66 +116,65 @@ int main(int argc, char *argv[]){
     orderedArr(queue, v);
 
     int input = 0;
+    //This is the user interface from terminal
     while(input !=4)
     {
-      displayMenu();
-      string line;
-      getline(cin, line); 
-      input = checkValidInput(line);
-      switch(input){
-        case 1:
-        {
-          cout<<"Top Priorty Road Shown: "<<endl;
-          RoadNode temp = queue.peek();
-          if(!queue.isEmpty()){
-            printNode(temp);
-          }
-          break;
-        }
-        case 2:
-        {
-          if(!queue.isEmpty()){
-            cout<<"Top Priority Road Removed: "<<endl;
-            printNode(queue.peek());
-            queue.dequeue();
-          }
-          else{
-            cout<<"Heap empty, cannot dequeue"<<endl;
-          }
-          break;
-        }
-        case 3:
-        {
-          int count = queue.currentQueueSize;
-          string n;
-          cout<<"How many roads would you like to print: ";
-          cin.clear();
-          getline(cin, n);
-          orderedArr(queue, v);
-          int numRoads = checkValidInput(n);
-          for(int i = 0; i<numRoads; i++){
-            if(count>0){
-              cout<<"Road Section: "<<i+1<<endl;
-              printNode(v[i]);
-              cout<<endl;
-              count--;
+        displayMenu(); //The user will always be able to see the menu after each choice
+        string line;
+        getline(cin, line); //Takes in what choice the user has selected
+        input = checkValidInput(line);
+        switch(input){
+            case 1: //Showing the road with highest priority
+            {
+                cout<<"Top Priorty Road Shown: "<<endl;
+                RoadNode temp = queue.peek();
+                if(!queue.isEmpty()){
+                    printNode(temp);
+                }
+                break;
             }
-            else{
-              cout<<"Queue empty no more to print."<<endl;
-              break;
+            case 2: //Removing the road with highest priority
+            {
+                if(!queue.isEmpty()){
+                    cout<<"Top Priority Road Removed: "<<endl;
+                    printNode(queue.peek());
+                    queue.dequeue();
+                }
+                else{
+                    cout<<"Heap empty, cannot dequeue"<<endl;
+                }
+                break;
             }
-          }
-          break;
+            case 3: //Printing the topN (top n amount of highest priorities)
+            {
+                int count = queue.currentQueueSize;
+                string n;
+                cout<<"How many roads would you like to print: "; //User is able to
+                //choose how many roads they want to print
+                cin.clear();
+                getline(cin, n);
+                orderedArr(queue, v);
+                int numRoads = checkValidInput(n);
+                for(int i = 0; i<numRoads; i++){
+                    if(count>0){
+                        cout<<"Road Section: "<<i+1<<endl;
+                        printNode(v[i]);
+                        cout<<endl;
+                        count--;
+                    }
+                    else{
+                        cout<<"Queue empty no more to print."<<endl;
+                        break;
+                    }
+                }
+                break;
+            }
+            case 4:
+            {
+                break;
+            }
         }
-        case 4:
-        {
-          break;
-        }
-      }
     }
-      
-
     cout<<"Goodbye!"<<endl;
-
     return 0;
 }
