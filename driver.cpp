@@ -23,14 +23,21 @@ void displayMenu(){
 }
 
 //Purpose: This is just making sure the input is valid
-int checkValidInput(string l)
+int checkValidInput(string l, int type)
 {
-    if (l.length() > 1 )
+    if (l.length() > 1 && type == 0 )
         return 0;
-    if (l[0] < 49 || l[0] > 52)
+    if ((l[0] < 49 || l[0] > 52) && type == 0)
         return 0;
     else{
+      try{
         return stoi(l);
+      }
+      catch(...){
+        cout << "Invalid Input, default value of 1" << endl;
+        return 1;
+      }
+        
     }
 }
 
@@ -122,7 +129,7 @@ int main(int argc, char *argv[]){
         displayMenu(); //The user will always be able to see the menu after each choice
         string line;
         getline(cin, line); //Takes in what choice the user has selected
-        input = checkValidInput(line);
+        input = checkValidInput(line , 0);
         switch(input){
             case 1: //Showing the road with highest priority
             {
@@ -154,7 +161,7 @@ int main(int argc, char *argv[]){
                 cin.clear();
                 getline(cin, n);
                 orderedArr(queue, v);
-                int numRoads = checkValidInput(n);
+                int numRoads = checkValidInput(n, 1);
                 for(int i = 0; i<numRoads; i++){
                     if(count>0){
                         cout<<"Road Section: "<<i+1<<endl;
